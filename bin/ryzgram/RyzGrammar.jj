@@ -1,0 +1,307 @@
+/** 
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+ 
+ */ options {   static = true; }  PARSER_BEGIN(RyzGrammar)
+	 package ryzgram;
+	 
+	public class RyzGrammar {
+	static public S1SymTab st = new S1SymTab();
+	 public static void main(String args [])
+	  
+	 throws ParseException   {
+
+	 RyzGrammar compiler = new RyzGrammar(System.in);
+
+	 compiler.program();    }
+	
+}
+	
+	PARSER_END(RyzGrammar)
+	
+	SKIP :
+	{    
+	  " "
+	| "\t" 
+	| "\n"
+	| "\r"
+	}    
+	 
+	
+	TOKEN :
+	{
+	  < ID: ["A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
+	|
+	  < NUM: ( ["0"-"9"] )+ >
+	| < ASSIGN: "=" >
+	| < IFSY:"if" >
+	| < ELSESY:"else" >
+	| < WHILESY:"while " >
+	| < THENSY:"then" >
+	| < PROGRAMSY:"program" >
+	| < ENDSY:"end" > 
+	| < VARSY:"var" > 
+	| < PRINTSY:"print" > 
+	  
+	}
+  
+void program():
+{  	System.out.print("Please enter a program name");
+	System.out.print("");
+}
+{
+	  
+	( < PROGRAMSY > < ID > ";"
+	Declarations() StatementList()	< ENDSY >
+	)
+}
+
+void Declarations():
+{ 
+  System.out.println("Please enter the declarations");
+  System.out.println("");
+}
+{
+  
+  ( < VARSY > < ID >  ";" )* 
+  
+}
+void StatementList():
+{
+  System.out.println("Please enter the Statment List");
+  System.out.println("");
+}
+{
+  (    Statement() ";"
+  )*
+}
+
+	void Statement(): 
+	{
+	  System.out.println("Please enter a statement");
+	  System.out.println("");
+	}
+	{
+	(
+	  Assignement()
+	| IfStatement()
+	| WhileStatement()
+	| PrintStatement()  
+	  )
+	}	void Assignement(): 
+	{
+	  System.out.println("Please enter an assignment statment");
+	  System.out.println("");
+	}
+	 {
+	
+		( < ID > "=" ExpressionList() ";"			{
+			  System.out.println("MVC 10000, B");
+			  System.out.println("STR B,A");
+			  System.out.println("");
+			}
+		)
+	
+	 
+	}
+	
+	
+
+void IfStatement():
+{ }
+{
+
+	(	< IFSY > Condition()
+	"{" StatementList() "}"
+	< THENSY >
+	"{" StatementList() "}"	
+	 < ELSESY >
+	  "{" StatementList() "}"
+	)
+}
+void WhileStatement():
+{ }
+{
+	< WHILESY > Condition()
+	" { " StatementList() " }"
+}
+
+void Condition():
+{ }
+{
+  "(" simplexp() rel() simplexp() ")"
+ 
+}
+	
+	
+	void rel():
+	{ }
+	{
+	
+	  "<"
+	| "=="
+	| ">"
+	}
+	
+	void simplexp():
+	{ }
+	{
+	  
+		< ID > | < NUM >
+	}
+	
+	void PrintStatement():
+	{ }
+	{ 
+	  < PRINTSY > "(" ( < ID > | < NUM > ) ")" 
+	}
+
+
+void ExpressionList() :
+{
+    String s;
+}
+{
+    {
+     
+    }
+  ( s=Expression() 
+    { System.out.println("********Postfixed********");
+      System.out.println(s);
+      char ch;
+      System.out.println("*********************");
+      for (int i=0;i<s.length();i++)
+    {
+     ch=s.charAt(i);
+     if (ch=='*')
+     System.out.println("MUL");
+     else if (ch=='+')System.out.println("ADD");
+     else System.out.println("PUSH "+ch);
+    }
+    System.out.println("*********************");
+    System.out.println("CODE GENERATION FOR MICRO-ASSEMBLER");
+    System.out.println("MVC 10000,D");
+    for (int i=0;i<s.length();i++)
+    {
+     ch=s.charAt(i);
+     if (ch=='+')
+     { System.out.println("LDR  D,A");
+       System.out.println("ADC  -1,D"); 
+       System.out.println("ADR  D,A");
+       System.out.println("STR  D,A");
+     }
+     else if (ch=='*')
+     { System.out.println("LDR  D,A");
+       System.out.println("ADC -1,D"); 
+       System.out.println("MLR  D,A");
+       System.out.println("STR  D,A");}
+     else { System.out.println("ADC "+"1"+",D");
+       System.out.println("LDC "+ch+",D");
+     }
+    }
+    
+      //System.out.println("");
+ //System.out.println("Please type in another expression followed by a \";\" or ^D to quit:");
+  //System.out.println("");
+    }
+  )
+ 
+}
+
+ 
+
+/** An Expression. */
+String Expression() :
+{
+    java.util.Vector termimage = new java.util.Vector();
+    String s;
+}
+{
+  s=Term()
+    {
+      termimage.addElement(s);
+    }
+  ( "+" s=Term()
+    {
+      termimage.addElement(s);
+    }
+  )*
+    {
+      if (termimage.size() == 1) {
+        return (String)termimage.elementAt(0);
+          } else {
+            s =  (String)termimage.elementAt(0);
+        for (int i = 1; i < termimage.size()-1; i++) {
+          s += "" + (String)termimage.elementAt(i);
+        }
+        if (termimage.size() > 2) {
+          s += "";
+        
+        s += "+" + (String)termimage.elementAt(termimage.size()-1);
+for (int i = 1; i < termimage.size()-1; i++) {
+         s += "+" ; 
+       } }else s=s+((String)termimage.elementAt(1))+"+";
+            return s;
+          }
+    }
+}
+
+ 
+
+/** A Term. */
+String Term() :
+{
+    java.util.Vector factorimage = new java.util.Vector();
+    String s;
+}
+{
+  s=Factor()
+    {
+      factorimage.addElement(s);
+    }
+  ( "*" s=Factor()
+    {
+      factorimage.addElement(s);
+    }
+  )*
+    {
+      if (factorimage.size() == 1) {
+        return (String)factorimage.elementAt(0);
+          } else {
+            s = (String)factorimage.elementAt(0);
+        for (int i = 1; i < factorimage.size()-1; i++) {
+          s += (String)factorimage.elementAt(i);
+        }
+        if (factorimage.size() > 2) {
+        s += (String)factorimage.elementAt(factorimage.size()-1);
+for (int i = 1; i < factorimage.size(); i++) {
+          s += "*" ;
+        } } else s=s+(String)factorimage.elementAt(1)+"*";
+            return s;
+          }
+    }
+}
+
+ 
+
+/** A Factor. */
+String Factor() :
+{
+    Token t;
+    String s;
+}
+{
+  t=<ID>
+    {
+      return t.image;
+    }
+|
+  t=<NUM>
+    {
+      return t.image;
+    }
+|
+  "(" s=Expression() ")"
+    {
+      return s;
+    }
+}
+

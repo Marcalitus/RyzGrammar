@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>7</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>238</x>
+      <y>651</y>
+      <w>511</w>
+      <h>672</h>
+    </coordinates>
+    <panel_attributes>/* JavaCCOptions:STATIC=true,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */&#13;
+ryzgram::SimpleCharStream
+--
++staticFlag = true: boolean
+~bufsize: int
+~available: int
+~tokenBegin: int
++bufpos = -1: int
+#bufline[]: int
+#bufcolumn[]: int
+#column = 0: int
+#line = 1: int
+#prevCharIsCR = false: boolean
+#prevCharIsLF = false: boolean
+#inputStream: java.io.Reader
+#buffer: char[]
+#maxNextCharInd = 0: int
+#inBuf = 0: int
+#tabSize = 8: int
+--
++SimpleCharStream(java.io.Reader dstream, int startline, int startcolumn, int buffersize): ctor
++SimpleCharStream(java.io.Reader dstream, int startline, int startcolumn): ctor
++SimpleCharStream(java.io.Reader dstream): ctor
++SimpleCharStream(java.io.InputStream dstream, String encoding, int startline, int startcolumn, int buffersize): ctor
++SimpleCharStream(java.io.InputStream dstream, int startline, int startcolumn, int buffersize): ctor
++SimpleCharStream(java.io.InputStream dstream, String encoding, int startline, int startcolumn): ctor
++SimpleCharStream(java.io.InputStream dstream, int startline, int startcolumn): ctor
++SimpleCharStream(java.io.InputStream dstream, String encoding): ctor
++SimpleCharStream(java.io.InputStream dstream): ctor
+#setTabSize(int i): void
+#getTabSize(int i): int
+#ExpandBuff(boolean wrapAround): void
+#FillBuff(): void
++BeginToken(): char
+#UpdateLineColumn(char c): void
++readChar(): char
++getColumn(): int
++getLine(): int
++getEndColumn(): int
++getEndLine(): int
++getBeginColumn(): int
++getBeginLine(): int
++backup(int amount): void
++ReInit(java.io.Reader dstream, int startline, int startcolumn, int buffersize): void
++ReInit(java.io.Reader dstream, int startline, int startcolumn): void
++ReInit(java.io.Reader dstream): void
++ReInit(java.io.InputStream dstream, String encoding, int startline, int startcolumn, int buffersize): void
++ReInit(java.io.InputStream dstream, int startline, int startcolumn, int buffersize): void
++ReInit(java.io.InputStream dstream, String encoding): void
++ReInit(java.io.InputStream dstream): void
++ReInit(java.io.InputStream dstream, String encoding, int startline, int startcolumn): void
++ReInit(java.io.InputStream dstream, int startline, int startcolumn): void
++GetImage(): String
++GetSuffix(int len): char[]
++Done(): void
++adjustBeginLineColumn(int newLine, int newCol): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>868</x>
+      <y>0</y>
+      <w>294</w>
+      <h>560</h>
+    </coordinates>
+    <panel_attributes>ryzgram::RyzGrammar
+--
+-jj_initialized_once = false: boolean
++token_source: RyzGrammarTokenManager
+~jj_input_stream: SimpleCharStream
++token: Token
++jj_nt: Token
+-jj_ntk: int
+-jj_gen: int
+-jj_la1 = new int[9]: int[]
+-jj_la1_0: int[]
+-jj_expentries = new java.util.ArrayList&lt;int[]&gt;(): java.util.List&lt;int[]&gt;
+-jj_expentry: int[]
+-jj_kind = -1: int
+--
++RyzGrammar(java.io.InputStream stream): ctor
++RyzGrammar(java.io.InputStream stream, String encoding): ctor
++RyzGrammar(java.io.Reader stream): ctor
++RyzGrammar(RyzGrammarTokenManager tm): ctor
++main(String args[]): void
++program(): void
++Declarations(): void
++StatementList(): void
++Statement(): void
++Assignement(): void
++IfStatement(): void
++WhileStatement(): void
++Condition(): void
++rel(): void
++simplexp(): void
++PrintStatement(): void
++ExpressionList(): void
++Expression(): String
++Term(): String
++Factor(): String
+-jj_la1_init_0(): void
++ReInit(java.io.InputStream stream): void
++ReInit(java.io.InputStream stream, String encoding): void
++ReInit(java.io.Reader stream): void
++ReInit(RyzGrammarTokenManager tm): void
+-jj_consume_token(int kind): Token
++getNextToken(): Token
++getToken(int index): Token
+-jj_ntk(): int
++generateParseException(): ParseException
++enable_tracing(): void
++disable_tracing(): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>819</x>
+      <y>721</y>
+      <w>1442</w>
+      <h>504</h>
+    </coordinates>
+    <panel_attributes>ryzgram::RyzGrammarTokenManager
+--
++debugStream = System.out: java.io.PrintStream
+~jjnextStates = {}: int[]
++jjstrLiteralImages = { "", null, null, null, null, null, null, "\75", "\151\146",
+
+
+"\145\154\163\145", "\167\150\151\154\145\40", "\164\150\145\156", "\160\162\157\147\162\141\155", "\145\156\144", "\166\141\162", "\160\162\151\156\164", "\73", "\173", "\175", "\40\173\40", "\40\175", "\50", "\51", "\74", "\75\75", "\76", "\53", "\52" }: String[]
++lexStateNames = { "DEFAULT" }: String[]
+~jjtoToken = { 0xfffffe1L }: long[]
+~jjtoSkip = { 0x1eL }: long[]
+#input_stream: SimpleCharStream
+-jjrounds = new int[3]: int[]
+-jjstateSet = new int[6]: int[]
+#curChar: char
+~curLexState = 0: int
+~defaultLexState = 0: int
+~jjnewStateCnt: int
+~jjround: int
+~jjmatchedPos: int
+~jjmatchedKind: int
+--
++RyzGrammarTokenManager(SimpleCharStream stream): ctor
++RyzGrammarTokenManager(SimpleCharStream stream, int lexState): ctor
++setDebugStream(java.io.PrintStream ds): void
+-jjStopStringLiteralDfa_0(int pos, long active0): int
+-jjStartNfa_0(int pos, long active0): int
+-jjStopAtPos(int pos, int kind): int
+-jjMoveStringLiteralDfa0_0(): int
+-jjMoveStringLiteralDfa1_0(long active0): int
+-jjMoveStringLiteralDfa2_0(long old0, long active0): int
+-jjMoveStringLiteralDfa3_0(long old0, long active0): int
+-jjMoveStringLiteralDfa4_0(long old0, long active0): int
+-jjMoveStringLiteralDfa5_0(long old0, long active0): int
+-jjMoveStringLiteralDfa6_0(long old0, long active0): int
+-jjMoveNfa_0(int startState, int curPos): int
++ReInit(SimpleCharStream stream): void
+-ReInitRounds(): void
++ReInit(SimpleCharStream stream, int lexState): void
++SwitchTo(int lexState): void
+#jjFillToken(): Token
++getNextToken(): Token
+-jjCheckNAdd(int state): void
+-jjAddStates(int start, int end): void
+-jjCheckNAddTwoStates(int state1, int state2): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2268</x>
+      <y>721</y>
+      <w>504</w>
+      <h>245</h>
+    </coordinates>
+    <panel_attributes>/* JavaCCOptions:TOKEN_EXTENDS=,KEEP_LINE_COL=null,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */&#13;
+ryzgram::Token
+--
+-serialVersionUID = 1L: long
++kind: int
++beginLine: int
++beginColumn: int
++endLine: int
++endColumn: int
++image: String
++next: Token
++specialToken: Token
+--
++Token(): ctor
++Token(int kind): ctor
++Token(int kind, String image): ctor
++getValue(): Object
++toString(): String
++newToken(int ofKind, String image): Token
++newToken(int ofKind): Token
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>1400</y>
+      <w>1120</w>
+      <h>217</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+ryzgram::RyzGrammarConstants
+--
+~EOF = 0: int
+~ID = 5: int
+~NUM = 6: int
+~ASSIGN = 7: int
+~IFSY = 8: int
+~ELSESY = 9: int
+~WHILESY = 10: int
+~THENSY = 11: int
+~PROGRAMSY = 12: int
+~ENDSY = 13: int
+~VARSY = 14: int
+~PRINTSY = 15: int
+~DEFAULT = 0: int
+~tokenImage = { "&lt;EOF&gt;", "\" \"", "\"\\t\"", "\"\\n\"", "\"\\r\"", "&lt;ID&gt;", "&lt;NUM&gt;", "\"=\"", "\"if\"", "\"else\"", "\"while \"", "\"then\"", "\"program\"", "\"end\"", "\"var\"", "\"print\"", "\";\"", "\"{\"", "\"}\"", "\" { \"", "\" }\"", "\"(\"", "\")\"", "\"&lt;\"", "\"==\"", "\"&gt;\"", "\"+\"", "\"*\"" }: String[]
+--
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1127</x>
+      <y>1400</y>
+      <w>567</w>
+      <h>196</h>
+    </coordinates>
+    <panel_attributes>/* JavaCCOptions: */&#13;
+ryzgram::TokenMgrError
+--
+-serialVersionUID = 1L: long
+~LEXICAL_ERROR = 0: int
+~STATIC_LEXER_ERROR = 1: int
+~INVALID_LEXICAL_STATE = 2: int
+~LOOP_DETECTED = 3: int
+~errorCode: int
+--
++TokenMgrError(): ctor
++TokenMgrError(String message, int reason): ctor
++TokenMgrError(boolean EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar, int reason): ctor
+#addEscapes(String str): String
+#LexicalError(boolean EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar): String
++getMessage(): String
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1701</x>
+      <y>1400</y>
+      <w>483</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>/* JavaCCOptions:KEEP_LINE_COL=null */&#13;
+ryzgram::ParseException
+--
+-serialVersionUID = 1L: long
++currentToken: Token
++expectedTokenSequences: int[][]
++tokenImage: String[]
+#eol = System.getProperty("line.separator", "\n"): String
+--
++ParseException(Token currentTokenVal, int[][] expectedTokenSequencesVal, String[] tokenImageVal): ctor
++ParseException(): ctor
++ParseException(String message): ctor
+-initialise(Token currentToken, int[][] expectedTokenSequences, String[] tokenImage): String
+~add_escapes(String str): String
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>1624</y>
+      <w>140</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>ryzgram::S1SymTab
+--
+-symbol: ArrayList&lt;String&gt;
+--
++S1SymTab(): ctor
++enter(String s): void
++getSymbol(int index): String
++getSize(): int
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>833</x>
+      <y>735</y>
+      <w>1442</w>
+      <h>504</h>
+    </coordinates>
+    <panel_attributes>ryzgram::RyzGrammarTokenManager
+--
++debugStream = System.out: java.io.PrintStream
+~jjnextStates = {}: int[]
++jjstrLiteralImages = { "", null, null, null, null, null, null, "\75", "\151\146", "\145\154\163\145", "\167\150\151\154\145\40", "\164\150\145\156", "\160\162\157\147\162\141\155", "\145\156\144", "\166\141\162", "\160\162\151\156\164", "\73", "\173", "\175", "\40\173\40", "\40\175", "\50", "\51", "\74", "\75\75", "\76", "\53", "\52" }: String[]
++lexStateNames = { "DEFAULT" }: String[]
+~jjtoToken = { 0xfffffe1L }: long[]
+~jjtoSkip = { 0x1eL }: long[]
+#input_stream: SimpleCharStream
+-jjrounds = new int[3]: int[]
+-jjstateSet = new int[6]: int[]
+#curChar: char
+~curLexState = 0: int
+~defaultLexState = 0: int
+~jjnewStateCnt: int
+~jjround: int
+~jjmatchedPos: int
+~jjmatchedKind: int
+--
++RyzGrammarTokenManager(SimpleCharStream stream): ctor
++RyzGrammarTokenManager(SimpleCharStream stream, int lexState): ctor
++setDebugStream(java.io.PrintStream ds): void
+-jjStopStringLiteralDfa_0(int pos, long active0): int
+-jjStartNfa_0(int pos, long active0): int
+-jjStopAtPos(int pos, int kind): int
+-jjMoveStringLiteralDfa0_0(): int
+-jjMoveStringLiteralDfa1_0(long active0): int
+-jjMoveStringLiteralDfa2_0(long old0, long active0): int
+-jjMoveStringLiteralDfa3_0(long old0, long active0): int
+-jjMoveStringLiteralDfa4_0(long old0, long active0): int
+-jjMoveStringLiteralDfa5_0(long old0, long active0): int
+-jjMoveStringLiteralDfa6_0(long old0, long active0): int
+-jjMoveNfa_0(int startState, int curPos): int
++ReInit(SimpleCharStream stream): void
+-ReInitRounds(): void
++ReInit(SimpleCharStream stream, int lexState): void
++SwitchTo(int lexState): void
+#jjFillToken(): Token
++getNextToken(): Token
+-jjCheckNAdd(int state): void
+-jjAddStates(int start, int end): void
+-jjCheckNAddTwoStates(int state1, int state2): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>833</x>
+      <y>735</y>
+      <w>1442</w>
+      <h>504</h>
+    </coordinates>
+    <panel_attributes>ryzgram::RyzGrammarTokenManager
+--
++debugStream = System.out: java.io.PrintStream
+~jjnextStates = {}: int[]
++jjstrLiteralImages = { "", null, null, null, null, null, null, "\75", "\151\146",
+
+
+"\145\154\163\145", "\167\150\151\154\145\40", "\164\150\145\156", "\160\162\157\147\162\141\155", "\145\156\144", "\166\141\162", "\160\162\151\156\164", "\73", "\173", "\175", "\40\173\40", "\40\175", "\50", "\51", "\74", "\75\75", "\76", "\53", "\52" }: String[]
++lexStateNames = { "DEFAULT" }: String[]
+~jjtoToken = { 0xfffffe1L }: long[]
+~jjtoSkip = { 0x1eL }: long[]
+#input_stream: SimpleCharStream
+-jjrounds = new int[3]: int[]
+-jjstateSet = new int[6]: int[]
+#curChar: char
+~curLexState = 0: int
+~defaultLexState = 0: int
+~jjnewStateCnt: int
+~jjround: int
+~jjmatchedPos: int
+~jjmatchedKind: int
+--
++RyzGrammarTokenManager(SimpleCharStream stream): ctor
++RyzGrammarTokenManager(SimpleCharStream stream, int lexState): ctor
++setDebugStream(java.io.PrintStream ds): void
+-jjStopStringLiteralDfa_0(int pos, long active0): int
+-jjStartNfa_0(int pos, long active0): int
+-jjStopAtPos(int pos, int kind): int
+-jjMoveStringLiteralDfa0_0(): int
+-jjMoveStringLiteralDfa1_0(long active0): int
+-jjMoveStringLiteralDfa2_0(long old0, long active0): int
+-jjMoveStringLiteralDfa3_0(long old0, long active0): int
+-jjMoveStringLiteralDfa4_0(long old0, long active0): int
+-jjMoveStringLiteralDfa5_0(long old0, long active0): int
+-jjMoveStringLiteralDfa6_0(long old0, long active0): int
+-jjMoveNfa_0(int startState, int curPos): int
++ReInit(SimpleCharStream stream): void
+-ReInitRounds(): void
++ReInit(SimpleCharStream stream, int lexState): void
++SwitchTo(int lexState): void
+#jjFillToken(): Token
++getNextToken(): Token
+-jjCheckNAdd(int state): void
+-jjAddStates(int start, int end): void
+-jjCheckNAddTwoStates(int state1, int state2): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
