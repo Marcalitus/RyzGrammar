@@ -1,15 +1,36 @@
-/** 
+	void Statement(): 
  * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+ 
- */ options {   static = true; }  PARSER_BEGIN(RyzGrammar)
-	 package ryzgram;
-	 
+ */ options {   static = true; }
+
+ PARSER_BEGIN(RyzGrammar)
+
+ 
+package ryzgram;
+import java.io.*;
+import java.util.*;
+	
 	public class RyzGrammar {
-	static public S1SymTab st = new S1SymTab();
+//building the output file arguments
+
+//	String outFileName = args[0] = ".ua";
+//	PrintWriter outFile = new PrintWriter(outFileName);
+//
+//
+//	outFile.println("; from JavaCC written by Mohammed Abdulrahman ");
+	//No idea what is causing this to make an error therefore I will comment everything else.
+
+//----------------------------------------
+	static PrintWriter output = null;
+	static public S1SymTab symt = new S1SymTab();
+	static public Token t = new Token();
+	static public S1CodeGen cg = new S1CodeGen(output, symt);
 	 public static void main(String args [])
 	  
-	 throws ParseException   {
-
+	 throws ParseException
+	 {
+	  	
 	 RyzGrammar compiler = new RyzGrammar(System.in);
+
 
 	 compiler.program();    }
 	
@@ -44,37 +65,54 @@
 	}
   
 void program():
-{  	System.out.print("Please enter a program name");
-	System.out.print("");
+{  	System.out.print("Please enter a program name\n");
+
 }
 {
 	  
 	( < PROGRAMSY > < ID > ";"
-	Declarations() StatementList()	< ENDSY >
+	Declarations() StatementList()
+	< ENDSY >
 	)
 }
 
 void Declarations():
 { 
-  System.out.println("Please enter the declarations");
+  System.out.println("Please enter the declarations\n");
   System.out.println("");
+  
 }
 {
   
-  ( < VARSY > < ID >  ";" )* 
+  (
+    < VARSY >
+	t =   < ID > 
+	{
+  	int size = symt.getSize();
+  	symt.enter(t.image);
+  	if (size == symt.getSize()) {
+  	  System.out.println("This variable is already in the symbol table, please try another variable.");
+  	}
+
+ 
+  }
+   	";"
+   )* 
   
 }
+
 void StatementList():
 {
   System.out.println("Please enter the Statment List");
   System.out.println("");
 }
 {
-  (    Statement() ";"
+  (
+    Statement() ";"
   )*
 }
 
-	void Statement(): 
+/** 
 	{
 	  System.out.println("Please enter a statement");
 	  System.out.println("");
@@ -86,21 +124,37 @@ void StatementList():
 	| WhileStatement()
 	| PrintStatement()  
 	  )
-	}	void Assignement(): 
+	}
+
+	
+void Assignement(): 
 	{
-	  System.out.println("Please enter an assignment statment");
+	  System.out.println("Please enter an Assignement statment");
 	  System.out.println("");
 	}
 	 {
 	
-		( < ID > "=" ExpressionList() ";"			{
-			  System.out.println("MVC 10000, B");
-			  System.out.println("STR B,A");
-			  System.out.println("");
+		
+		  t= < ID > 
+			{
+			  int size = symt.getSize();
+			  int order = symt.enter(t.image);
+			  
+			  if (size == order)
+			  {
+				System.out.println(t.image + " is not in the Symbol Table");
+			  }
+			  int memory = order + 10000;
+			  cg.emitInstruction("MVC " + memory + " ,B");
+			  cg.emitInstruction("STR B,A" + "\n");
+//			  System.out.println("MVC 10000, B");
+//			  System.out.println("STR B,A");
+//			  System.out.println("");
 			}
-		)
+
+		"=" Expression() 
+		
 	
-	 
 	}
 	
 	
@@ -109,7 +163,8 @@ void IfStatement():
 { }
 {
 
-	(	< IFSY > Condition()
+	(
+	< IFSY > Condition()
 	"{" StatementList() "}"
 	< THENSY >
 	"{" StatementList() "}"	
@@ -132,15 +187,15 @@ void Condition():
 }
 	
 	
-	void rel():
-	{ }
-	{
-	
-	  "<"
-	| "=="
-	| ">"
-	}
-	
+void rel():
+{ }
+{
+
+  "<"
+| "=="
+| ">"
+}
+
 	void simplexp():
 	{ }
 	{
@@ -153,155 +208,107 @@ void Condition():
 	{ 
 	  < PRINTSY > "(" ( < ID > | < NUM > ) ")" 
 	}
-
-
-void ExpressionList() :
-{
-    String s;
-}
-{
-    {
-     
-    }
-  ( s=Expression() 
-    { System.out.println("********Postfixed********");
-      System.out.println(s);
-      char ch;
-      System.out.println("*********************");
-      for (int i=0;i<s.length();i++)
-    {
-     ch=s.charAt(i);
-     if (ch=='*')
-     System.out.println("MUL");
-     else if (ch=='+')System.out.println("ADD");
-     else System.out.println("PUSH "+ch);
-    }
-    System.out.println("*********************");
-    System.out.println("CODE GENERATION FOR MICRO-ASSEMBLER");
-    System.out.println("MVC 10000,D");
-    for (int i=0;i<s.length();i++)
-    {
-     ch=s.charAt(i);
-     if (ch=='+')
-     { System.out.println("LDR  D,A");
-       System.out.println("ADC  -1,D"); 
-       System.out.println("ADR  D,A");
-       System.out.println("STR  D,A");
-     }
-     else if (ch=='*')
-     { System.out.println("LDR  D,A");
-       System.out.println("ADC -1,D"); 
-       System.out.println("MLR  D,A");
-       System.out.println("STR  D,A");}
-     else { System.out.println("ADC "+"1"+",D");
-       System.out.println("LDC "+ch+",D");
-     }
-    }
-    
-      //System.out.println("");
- //System.out.println("Please type in another expression followed by a \";\" or ^D to quit:");
-  //System.out.println("");
-    }
-  )
- 
-}
-
  
 
 /** An Expression. */
-String Expression() :
-{
-    java.util.Vector termimage = new java.util.Vector();
-    String s;
+void Expression() :
+{ }
+ {
+   Term()
+
+(
+  "+" Term()
+  {
+     System.out.println("LDR  D,A");
+       System.out.println("ADC  -1,D"); 
+		System.out.println("LDR D, B"); 
+       System.out.println("ADR  B,A");
+       System.out.println("STR  D,A");
+    }
+|  
+//ldr b,a | adc -1, b | ldr b,c| adr c,a | str b,a 
+"-" Term()
+	{
+		System.out.println("LDR  D,A");
+		System.out.println("MLC -1,A");
+		System.out.println("ADC  -1,D"); 
+		System.out.println("LDR D, B"); 		
+       System.out.println("ADR  B,A");
+       System.out.println("STR  D,A");
+    }
+)*
 }
+   
+// for - | ldr b,a | mlc -1,a | adc -1, b | ldr b,c | adr c,a| str b,a
+
+
+
+void Term():
+{ }
+
 {
-  s=Term()
-    {
-      termimage.addElement(s);
+  // B = D | A = A | 
+ (
+    
+	  "*" Factor()
+  {
+	System.out.println("LDR  D,A");
+	System.out.println("ADC  -1,D"); 
+	System.out.println("LDR D, C");
+	System.out.println("MLR C, A");
+	System.out.println("STR  D,A");
     }
-  ( "+" s=Term()
-    {
-      termimage.addElement(s);
+|  
+// ldr b,a | adc -1, b | ldr b,c |  mlr b | str b,a
+	"/" Factor()
+	  {
+     System.out.println("LDR  D,A");
+       System.out.println("ADC  -1,D"); 
+		System.out.println("LDR D, C");
+		System.out.println("DVR C, A");
+       System.out.println("STR  D,A");
     }
-  )*
-    {
-      if (termimage.size() == 1) {
-        return (String)termimage.elementAt(0);
-          } else {
-            s =  (String)termimage.elementAt(0);
-        for (int i = 1; i < termimage.size()-1; i++) {
-          s += "" + (String)termimage.elementAt(i);
-        }
-        if (termimage.size() > 2) {
-          s += "";
-        
-        s += "+" + (String)termimage.elementAt(termimage.size()-1);
-for (int i = 1; i < termimage.size()-1; i++) {
-         s += "+" ; 
-       } }else s=s+((String)termimage.elementAt(1))+"+";
-            return s;
-          }
-    }
+)*
+
 }
+
+
 
  
 
 /** A Term. */
-String Term() :
-{
-    java.util.Vector factorimage = new java.util.Vector();
-    String s;
-}
-{
-  s=Factor()
-    {
-      factorimage.addElement(s);
-    }
-  ( "*" s=Factor()
-    {
-      factorimage.addElement(s);
-    }
-  )*
-    {
-      if (factorimage.size() == 1) {
-        return (String)factorimage.elementAt(0);
-          } else {
-            s = (String)factorimage.elementAt(0);
-        for (int i = 1; i < factorimage.size()-1; i++) {
-          s += (String)factorimage.elementAt(i);
-        }
-        if (factorimage.size() > 2) {
-        s += (String)factorimage.elementAt(factorimage.size()-1);
-for (int i = 1; i < factorimage.size(); i++) {
-          s += "*" ;
-        } } else s=s+(String)factorimage.elementAt(1)+"*";
-            return s;
-          }
-    }
-}
-
  
 
 /** A Factor. */
-String Factor() :
+void Factor() :
 {
-    Token t;
-    String s;
+   
 }
 {
   t=<ID>
     {
-      return t.image;
-    }
+      int Size = symt.getSize();
+      int Order = symt.enter(t.image);
+      if (symt.getSize() > Size)
+      {
+        System.out.println(t.image + "This variable is not in the symbol table or was defined before");
+      }
+      int memory = order + 10000;
+      System.out.println("LDC " + memory + " ,A");
+      System.out.println("ADC 1, D");
+	  System.out.println("STR D, A");
+		
+    } 
 |
   t=<NUM>
-    {
-      return t.image;
-    }
-|
-  "(" s=Expression() ")"
-    {
-      return s;
-    }
-}
+  {
+    
+    System.out.println("MVC " + t.image + " ,A");
+    System.out.println("ADC 1,D");
+    System.out.println("STR D,A");
 
+ }
+|
+  "(" t=Expression() ")"
+    }
+	
