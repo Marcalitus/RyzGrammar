@@ -1,4 +1,4 @@
-	void Statement(): 
+void Statement(): 
  * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+ 
  */ options {   static = true; }
 
@@ -259,7 +259,7 @@ void Term():
 	System.out.println("STR  D,A");
     }
 |  
-// ldr b,a | adc -1, b | ldr b,c |  mlr b | str b,a
+// l	dr b,a | adc -1, b | ldr b,c |  mlr b | str b,a
 	"/" Factor()
 	  {
      System.out.println("LDR  D,A");
@@ -280,7 +280,7 @@ void Term():
  
 
 /** A Factor. */
-void Factor() :
+	void Factor() :
 {
    
 }

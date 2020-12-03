@@ -1,0 +1,307 @@
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(Grammar)
+/** */
+
+import java.io.*;
+
+public class Grammar
+{
+  public static S1SymTab st;
+  public static S1CodeGen cg;
+  public static int counter=0;
+
+  /** Main entry point. */
+  public static void main(String args []) throws ParseException
+  {
+    PrintWriter outfile = null;
+    st = new S1SymTab();
+    cg = new S1CodeGen(outfile, st);
+    Grammar parser = new Grammar(System.in);
+    parser.program();
+  }
+}
+
+PARSER_END(Grammar)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  < ID : [ "A"-"Z" ] ([ "A"-"Z", "a"-"z", "0"-"9" ])* >
+| < NUM : ([ "0"-"9" ])+ >
+| < ASSIGN : "=" >
+| < IFSY : "if" >
+| < WHILESY : "while" >
+| < THENSY : "then" >
+| < ELSESY : "else" >
+| < PROGRAMSY : "program" >
+| < ENDSY : "end" >
+| < VARSY : "var" >
+| < PRINT : "print" >
+}
+
+void program() :
+{}
+{
+  < PROGRAMSY >
+  {
+      cg.emitInstruction("entry:");
+      cg.emitInstruction("MVC 10000,D");
+    }
+   < ID > ";" declarations() statementList()
+
+   < ENDSY >
+   {
+      cg.emitInstruction("exit:");
+      cg.emitInstruction("JMC exit");
+    }
+   
+}
+
+void declarations() :
+{Token t;}
+{
+  (
+    < VARSY >
+    t=<ID>
+    {
+
+      int size = st.getSize();
+      st.enter(t.image);
+      if (size == st.getSize()) {
+        System.out.println("error");
+		}
+    }
+    ";"
+  )*
+}
+
+void statementList() :
+{}
+{
+  (
+    statement() ";"
+  )*
+}
+
+void statement() :
+{}
+{
+  assignment()
+| ifStatement()
+| whileStatement()
+| print()
+}
+
+void assignment() :
+{
+  Token t;
+}
+{
+  t =< ID >
+  {
+    int size = st.getSize();
+    int order = st.enter(t.image);
+    if (st.getSize() >  size)
+    {System.out.println(t.image + " was not declared"); }
+    int address = order + 10000;
+    cg.emitInstruction("MVC " + (10000 + st.getSize()) + ",B");
+  }
+  "=" expression()
+  {
+    cg.emitInstruction("MVC " + (10000 + order) + ",B");
+	cg.emitInstruction("STR B,A");
+  }
+}
+
+void ifStatement() :
+{}
+{
+  {
+    counter=counter+1;
+  }
+  < IFSY > condition() < THENSY > "{" statementList() "}" {cg.emitInstruction("JMC afterelses"+counter); } < ELSESY > { cg.emitInstruction("elses"+counter+":"); } "{" statementList() "}" { cg.emitInstruction("afterelses"+counter+":"); }
+  
+}
+
+void whileStatement() :
+{}
+{
+  < WHILESY > condition() "{" statementList() "}"
+}
+
+void condition() :
+{Token t1, t2;}
+{
+  "(" simplexp() t1=rel() simplexp() ")"
+  {
+    cg.emitInstruction("LDR "+ "B" + ",A");
+    cg.emitInstruction("ADC "+ "-1" + ",B");
+    cg.emitInstruction("LDR "+ "B" + ",C");
+
+
+    switch (t1.image) {
+		case ">":
+		
+		cg.emitInstruction("DVR "+ "C" + ",A"); // A div by C and its true when the result is 0.xxxx?
+		cg.emitInstruction("JZC "+ "elses"+counter + ",A"); // jump to elses if A !=0?
+		
+
+			break;
+		case "==":
+		cg.emitInstruction("MLC "+ "-1" + ",C");
+		cg.emitInstruction("ADR "+ "C" + ",A"); // A must be zero to be true
+		
+
+			break;
+
+		case "<":
+		cg.emitInstruction("DVR "+ "A" + ",C"); // C div by A and its true when the result is 0.xxxx?
+		cg.emitInstruction("JZC "+ "elses" +counter+ ",C"); // jump to elses if C !=0?
+		
+
+			break;
+
+		default:
+			break;
+		}
+	
+    
+  }
+}
+
+Token rel() :
+{Token t;}
+{
+  t="<"
+  {
+    return t;
+  }
+| t="=="
+  {
+    return t;
+  }
+| t=">"
+  {
+    return t;
+  }
+  
+}
+
+void simplexp() :
+{Token t;}
+{
+  t= < ID >
+  {
+    int size = st.getSize();
+    int order = st.enter(t.image);
+    if (st.getSize() >  size)
+    {System.out.println(t.image + " was not declared"); }
+    int address = order + 10000;
+    cg.emitInstruction("LDC "+ address + ",A");
+    cg.emitInstruction("ADC "+ "1" + ",B");
+    cg.emitInstruction("STR "+ "B" + ",A");
+  }
+| t= < NUM >
+  {
+    cg.emitInstruction("MVC "+ t.image + ",A");
+    cg.emitInstruction("ADC "+ "1" + ",B");
+    cg.emitInstruction("STR "+ "B" + ",A"); 
+  }
+}
+
+void expression() :
+{}
+{
+  term() 
+  (
+    "+" term()
+    {
+      cg.emitInstruction("LDR "+ "B" + ",A");
+      cg.emitInstruction("ADC "+ "-1" + ",B");
+      cg.emitInstruction("LDR "+ "B" + ",C");
+      cg.emitInstruction("ADR "+ "C" + ",A");
+      cg.emitInstruction("STR "+ "B" + ",A"); 
+    }
+  | "-" term()
+   {
+      cg.emitInstruction("LDR "+ "B" + ",A");
+      cg.emitInstruction("ADC "+ "-1" + ",B");
+      cg.emitInstruction("LDR "+ "B" + ",C");
+      cg.emitInstruction("MLC "+ "-1" + ",C");
+      cg.emitInstruction("ADR "+ "C" + ",A");
+      cg.emitInstruction("STR "+ "B" + ",A"); 
+    }
+  )* 
+}
+
+void term() :
+{}
+{
+  factor()
+  (
+    "*" factor()
+    {
+      cg.emitInstruction("LDR "+ "B" + ",A");
+      cg.emitInstruction("ADC "+ "-1" + ",B");
+      cg.emitInstruction("LDR "+ "B" + ",C");
+      cg.emitInstruction("MLR "+ "C" + ",A");
+      cg.emitInstruction("STR "+ "B" + ",A"); 
+    }
+  | "/" factor()
+  	{
+      cg.emitInstruction("LDR "+ "B" + ",A");
+      cg.emitInstruction("ADC "+ "-1" + ",B");
+      cg.emitInstruction("LDR "+ "B" + ",C");
+      cg.emitInstruction("DVR "+ "C" + ",A");
+      cg.emitInstruction("STR "+ "B" + ",A"); 
+    }  
+  )* 
+}
+
+void factor() :
+{
+  Token t;
+}
+{
+  t = < ID >
+  {
+    int size = st.getSize();
+    int order = st.enter(t.image);
+    if (st.getSize() >  size)
+    {System.out.println(t.image + " was not declared"); }
+    int address = order + 10000;
+    cg.emitInstruction("LDC "+ address + ",A");
+    cg.emitInstruction("ADC "+ "1" + ",B");
+    cg.emitInstruction("STR "+ "B" + ",A");
+  }
+| 
+  t = < NUM >
+  {
+    cg.emitInstruction("MVC "+ t.image + ",A");
+    cg.emitInstruction("ADC "+ "1" + ",B");
+    cg.emitInstruction("STR "+ "B" + ",A"); 
+  }
+| 
+  t = "(" expression() ")" 
+}
+
+void print() :
+{}
+{
+  < PRINT >
+  (
+    < ID >
+  | < NUM >
+  )
+}
